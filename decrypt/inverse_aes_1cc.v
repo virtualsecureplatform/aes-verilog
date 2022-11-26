@@ -49,7 +49,7 @@ module inverse_aes_1cc
   generate 
   for(i=0;i<NR;i=i+1)
   begin:INVSHIFTROWS
-    inverseShiftRows c(.in(x1[i]), .shifted(x2[i]));
+    inverseShiftRows c(.x(x1[i]), .z(x2[i]));
   end
   endgenerate
 
@@ -74,7 +74,7 @@ module inverse_aes_1cc
   generate 
   for(i=0;i<NR-1;i=i+1)
   begin:INVMIXCOLUMNS
-    inverseMixColumns d(.state_in(x4[i]), .state_out(x1[i+1]));
+    inverseMixColumns d(.x(x4[i]), .z(x1[i+1]));
   end
   endgenerate
 

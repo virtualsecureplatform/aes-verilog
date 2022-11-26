@@ -1,29 +1,23 @@
-module inverseShiftRows (in, shifted);
-	input [0:127] in;
-	output [0:127] shifted;
+// https://github.com/The-OpenROAD-Project/OpenLane/blob/7f0486c949c21042e0a670dd77d2d654ad189483/designs/aes/src/aes.v#L778-L800
+module inverseShiftRows (
+x,
+z);
+
+	input [127:0] x;
+	output [127:0] z;
 	
-	// First row (r = 0) is not shifted
-	assign shifted[0+:8] = in[0+:8];
-	assign shifted[32+:8] = in[32+:8];
-	assign shifted[64+:8] = in[64+:8];
-   assign shifted[96+:8] = in[96+:8];
-	
-	// Second row (r = 1) is cyclically right shifted by 1 offset
-   assign shifted[8+:8] = in[104+:8];
-   assign shifted[40+:8] = in[8+:8];
-   assign shifted[72+:8] = in[40+:8];
-   assign shifted[104+:8] = in[72+:8];
-	
-	// Third row (r = 2) is cyclically right shifted by 2 offsets
-   assign shifted[16+:8] = in[80+:8];
-   assign shifted[48+:8] = in[112+:8];
-   assign shifted[80+:8] = in[16+:8];
-   assign shifted[112+:8] = in[48+:8];
-	
-	// Fourth row (r = 3) is cyclically right shifted by 3 offsets
-   assign shifted[24+:8] = in[56+:8];
-   assign shifted[56+:8] = in[88+:8];
-   assign shifted[88+:8] = in[120+:8];
-   assign shifted[120+:8] = in[24+:8];
+	wire [31 : 0] w0, w1, w2, w3;
+   wire [31 : 0] ws0, ws1, ws2, ws3;
+   assign w0 = x[127 : 096];
+   assign w1 = x[095 : 064];
+   assign w2 = x[063 : 032];
+   assign w3 = x[031 : 000];
+
+   assign ws0 = {w0[31 : 24], w3[23 : 16], w2[15 : 08], w1[07 : 00]};
+   assign ws1 = {w1[31 : 24], w0[23 : 16], w3[15 : 08], w2[07 : 00]};
+   assign ws2 = {w2[31 : 24], w1[23 : 16], w0[15 : 08], w3[07 : 00]};
+   assign ws3 = {w3[31 : 24], w2[23 : 16], w1[15 : 08], w0[07 : 00]};
+
+   assign z = {ws0, ws1, ws2, ws3};
 
 endmodule
