@@ -6,3 +6,6 @@ set(CMAKE_CXX_FLAGS "-march=native -O2 -g")
 
 find_package(verilator)
 add_subdirectory(cpp)
+# add_subdirectory(sbox)
+# add_subdirectory(mixcolumns)
+# add_subdirectory(shiftrows)
