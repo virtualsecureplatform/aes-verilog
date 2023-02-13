@@ -1,26 +1,23 @@
 // `timescale 1ns / 1ps
 // synopsys template
 
-
-module aes_1cc
+module aes_1cc_fixed
 (
   clock,
   reset,
-  g_input,
+  expandedKey,
   e_input,
   o
 );
   localparam    NR = 10;
   input                 clock;
   input                 reset;
-  input   [127:0]       g_input; // key
+  input    [128*(NR+1)-1:0] expandedKey;
   input   [127:0]       e_input; // message
   output  [127:0]       o;
 
-  wire    [127:0]          key;
   wire    [127:0]          msg;
   wire    [127:0]          out;
-  wire    [128*(NR+1)-1:0] expandedKey;
   wire    [127:0]          expandedKeyi[NR:0];
   wire    [127:0]          x1[NR-1:0];
   wire    [127:0]          x2[NR-1:0];
@@ -28,14 +25,10 @@ module aes_1cc
   wire    [127:0]          x4[NR-2:0];
 
 
-  assign  key = g_input;   
   assign  msg = e_input;
   assign  o = out;
 
   genvar i;
-
-  KeyExpansion e (.key(key), .expandedKey(expandedKey));
-
 
   generate 
   for(i=0;i<(NR+1);i=i+1)
@@ -78,5 +71,35 @@ module aes_1cc
   end
   endgenerate
 
+
+endmodule
+
+
+module aes_1cc
+(
+  clock,
+  reset,
+  g_input,
+  e_input,
+  o
+);
+  localparam    NR = 10;
+  input                 clock;
+  input                 reset;
+  input   [127:0]       g_input; // key
+  input   [127:0]       e_input; // message
+  output  [127:0]       o;
+
+  wire    [128*(NR+1)-1:0] expandedKey;
+
+  KeyExpansion e (.key(g_input), .expandedKey(expandedKey));
+
+  aes_1cc_fixed fixe_aes(
+    .clock(clock),
+    .reset(reset),
+    .expandedKey(expandedKey),
+    .e_input(e_input),
+    .o(o)
+  );
 
 endmodule
